@@ -3,15 +3,19 @@ package banksprojects;
 
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import network.ApiManager;
 
 /**
  *
  * @author Sebastian Güiza & Paola Montoya
  */
+
 public class StudentView extends javax.swing.JFrame {
 
-    DefaultListModel modelList = new DefaultListModel(); 
+    DefaultListModel modelList = new DefaultListModel();
+    ApiManager manager = new ApiManager();
+    User studentUser = new User();
 
     public StudentView() {
       
@@ -44,6 +48,7 @@ public class StudentView extends javax.swing.JFrame {
         close = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         commentsList = new javax.swing.JList<>();
+        updateView = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBounds(new java.awt.Rectangle(0, 0, 1000, 750));
@@ -101,8 +106,13 @@ public class StudentView extends javax.swing.JFrame {
 
         delete.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         delete.setText("Eliminar Cuenta");
+        delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteActionPerformed(evt);
+            }
+        });
         jPanel1.add(delete);
-        delete.setBounds(800, 600, 170, 33);
+        delete.setBounds(800, 620, 170, 33);
 
         close.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         close.setText("Cerrar Sesion");
@@ -117,15 +127,20 @@ public class StudentView extends javax.swing.JFrame {
         commentsList.setBackground(new java.awt.Color(166, 166, 166));
         commentsList.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         commentsList.setForeground(new java.awt.Color(0, 0, 0));
-        commentsList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(commentsList);
 
         jPanel1.add(jScrollPane1);
         jScrollPane1.setBounds(90, 260, 640, 440);
+
+        updateView.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        updateView.setText("Actualizar");
+        updateView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateViewActionPerformed(evt);
+            }
+        });
+        jPanel1.add(updateView);
+        updateView.setBounds(800, 580, 170, 33);
 
         getContentPane().add(jPanel1);
         jPanel1.setBounds(0, 0, 1000, 750);
@@ -142,15 +157,60 @@ public class StudentView extends javax.swing.JFrame {
     }//GEN-LAST:event_closeActionPerformed
 
     private void changePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePasswordActionPerformed
-        // TODO add your handling code here:
+
+        String oldPassword = JOptionPane.showInputDialog("Escribe tu contraseña actual");
+        
+        if (oldPassword.equals(studentUser.getPassword())){
+            
+            String newPassword = JOptionPane.showInputDialog("Escribe tu contraseña nueva");
+            
+            User updateUser = new User();
+            updateUser.setPassword(newPassword);
+            manager.updateUser(studentUser, updateUser);
+            JOptionPane.showMessageDialog(null, "Contraseña actualizada exitosamente");
+
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Contraseña incorrecta");
+        }
+        
     }//GEN-LAST:event_changePasswordActionPerformed
+
+    private void updateViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateViewActionPerformed
+        
+        modelList.removeAllElements();
+        
+        ApiManager manager = new ApiManager();
+        ArrayList<Project> projectsResponseList = manager.readProjects();
+        for (int i = 0; i < projectsResponseList.size(); i++) {
+        modelList.addElement(projectsResponseList.get(i).getProjectName());
+        }
+        
+    }//GEN-LAST:event_updateViewActionPerformed
+
+    private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
+       
+        int option = JOptionPane.showConfirmDialog(null, "¿Esta seguro que desea eliminar su cuenta?\nLos cambios no seran reversibles");
+        
+        if (option == JOptionPane.YES_OPTION){
+            
+            manager.deleteUser(studentUser);
+            JOptionPane.showMessageDialog(null, "Cuenta eliminada");
+            RolView rolView = new RolView();
+            rolView.setVisible(true);
+            this.setVisible(false);
+            
+        }    
+        
+    }//GEN-LAST:event_deleteActionPerformed
 
     void setUser(User userResponse) {
   
+        studentUser = userResponse;
         name.setText(userResponse.getName());
         lastName.setText(userResponse.getLastName());
-        int idNumber = userResponse.getId();
-        id.setText(Integer.toString(idNumber));
+        id.setText(userResponse.getId());
         rol.setText(userResponse.getRol());
         
     }
@@ -200,5 +260,6 @@ public class StudentView extends javax.swing.JFrame {
     private javax.swing.JLabel lastName;
     private javax.swing.JLabel name;
     private javax.swing.JLabel rol;
+    private javax.swing.JButton updateView;
     // End of variables declaration//GEN-END:variables
 }

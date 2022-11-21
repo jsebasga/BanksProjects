@@ -3,6 +3,7 @@ package banksprojects;
 
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import network.ApiManager;
 
 /**
@@ -11,15 +12,17 @@ import network.ApiManager;
  */
 public class AdminView extends javax.swing.JFrame {
 
+    ApiManager manager = new ApiManager();
     DefaultListModel modelList = new DefaultListModel(); 
-    
+    ArrayList<Project> projectsResponseList = new ArrayList();
+    User adminUser = new User();
+            
     public AdminView() {
         
         initComponents();
         modelList = new DefaultListModel();
         commentsList.setModel(modelList);
-        ApiManager manager = new ApiManager();
-        ArrayList<Project> projectsResponseList = manager.readProjects();
+        projectsResponseList = manager.readProjects();
         
         for (int i = 0; i < projectsResponseList.size(); i++) {
 
@@ -143,6 +146,11 @@ public class AdminView extends javax.swing.JFrame {
 
         delete.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         delete.setText("Eliminar Cuenta");
+        delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteActionPerformed(evt);
+            }
+        });
         jPanel1.add(delete);
         delete.setBounds(800, 620, 170, 33);
 
@@ -177,49 +185,80 @@ public class AdminView extends javax.swing.JFrame {
 
         int deleteComment = commentsList.getSelectedIndex();
         modelList.remove(deleteComment);
-        
-        //TODO: Llamar al api para borrar un proyecto, apiManager.deleteProject
-        
+        manager.deleteProject(projectsResponseList.get(deleteComment));
     }//GEN-LAST:event_deletePMVActionPerformed
 
     void setUser(User userResponse) {
   
+        adminUser = userResponse;
         name.setText(userResponse.getName());
         lastName.setText(userResponse.getLastName());
-        int idNumber = userResponse.getId();
-        id.setText(Integer.toString(idNumber));    
+        id.setText(userResponse.getId());    
         rol.setText(userResponse.getRol());
-
         
     }
     private void addPMVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPMVActionPerformed
 
-        String project = projectName.getText();
-        modelList.addElement(project);
-        
         Project newProject = new Project();
         ApiManager manager = new ApiManager();
         
         if (projectName.getText().length()==0){
         warningComment.setText("Debe de llenar este espacio");
         
-        
     }
         newProject.setProjectName(projectName.getText());
         
         manager.createProject(newProject);
+        
+        // Actualizar vista
+        
+        modelList.removeAllElements();
+        
+        ArrayList<Project> projectsResponseList = manager.readProjects();
+        for (int i = 0; i < projectsResponseList.size(); i++) {
+        modelList.addElement(projectsResponseList.get(i).getProjectName());
+        }
         
         projectName.setText("");
 
     }//GEN-LAST:event_addPMVActionPerformed
 
     private void changePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePasswordActionPerformed
-        // TODO add your handling code here:
+        
+        String oldPassword = JOptionPane.showInputDialog("Escribe tu contraseña actual");
+        
+        if (oldPassword.equals(adminUser.getPassword())){
+            
+            String newPassword = JOptionPane.showInputDialog("Escribe tu contraseña nueva");
+            
+            User updateUser = new User();
+            updateUser.setPassword(newPassword);
+            manager.updateUser(adminUser, updateUser);
+            JOptionPane.showMessageDialog(null, "Contraseña actualizada exitosamente");
+
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Contraseña incorrecta");
+        }
     }//GEN-LAST:event_changePasswordActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
+        
+        int option;
+        option = JOptionPane.showConfirmDialog(null, "¿Esta seguro que desea eliminar su cuenta?\nLos cambios no seran reversibles");
+        
+        if (option == JOptionPane.YES_OPTION){
+            
+            manager.deleteUser(adminUser);
+            JOptionPane.showMessageDialog(null, "Cuenta eliminada");
+            RolView rolView = new RolView();
+            rolView.setVisible(true);
+            this.setVisible(false);
+            
+        }    
+    }//GEN-LAST:event_deleteActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

@@ -1,9 +1,11 @@
 package network;
 
+import banksprojects.DeleteProjectRequest;
+import banksprojects.DeleteUserRequest;
 import banksprojects.Project;
+import banksprojects.UpdateUserRequest;
 import banksprojects.User;
 import com.google.gson.Gson;
-import java.awt.List;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,11 +57,8 @@ public class ApiManager {
             os.close();
 
             // read the response
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-            System.out.println(result);
+            printRequestResponse(conn);
 
-            in.close();
             conn.disconnect();
 
         } catch (IOException e) {
@@ -68,7 +67,8 @@ public class ApiManager {
         }
     }
 
-    //Crear Proyecto
+    // Crear Proyectos
+    
     public void createProject(Project project) {
 
         //Inicia el proceso de creacion
@@ -99,11 +99,8 @@ public class ApiManager {
             os.close();
 
             // read the response
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
-            System.out.println(result);
+            printRequestResponse(conn);
 
-            in.close();
             conn.disconnect();
 
         } catch (IOException e) {
@@ -170,9 +167,86 @@ public class ApiManager {
         return projectsList;
     }
 
-    // Actualizar usuario
-    public void updateUser(User user) {
+    // Eliminar Proyectos
+    
+    public void deleteProject(Project project) {
 
+        //Inicia el proceso de eliminacion
+        System.out.println("Eliminando Project");
+
+        DeleteProjectRequest deleteRequest = new DeleteProjectRequest();
+        deleteRequest.setCondition(project);
+
+        // 1. Transformar User to JSON
+        Gson gson = new Gson();
+        String deleteRequestJSON = gson.toJson(deleteRequest);
+        System.out.println(deleteRequestJSON);
+
+        // 2. Enviar JSON to API
+        try {
+
+            // Crear el requests y ejecutarlo
+            URL url = new URL(apiURL + "projects");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestMethod("DELETE");
+            conn.connect();
+
+            OutputStream os = conn.getOutputStream();
+            os.write(deleteRequestJSON.getBytes("UTF-8"));
+            os.close();
+
+            // read the response
+            printRequestResponse(conn);
+
+            conn.disconnect();
+
+        } catch (IOException e) {
+
+            System.out.println(e);
+        }
+    }
+
+    // Actualizar usuario
+    public void updateUser(User currentUser, User newUser) {
+        
+        //Inicia el proceso de actualizacion de datos
+        System.out.println("Actualizando datos");
+
+        UpdateUserRequest updateRequest = new UpdateUserRequest();
+        updateRequest.setCondition(currentUser);
+        updateRequest.setSet(newUser);
+        
+        // 1. Transformar User to JSON
+        Gson gson = new Gson();
+        String updateRequestJSON = gson.toJson(updateRequest);
+        System.out.println(updateRequestJSON);
+
+        // 2. Enviar JSON to API
+        try {
+
+            // Crear el requests y ejecutarlo
+            URL url = new URL(apiURL + "users");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestMethod("PUT");
+            conn.connect();
+
+            OutputStream os = conn.getOutputStream();
+            os.write(updateRequestJSON.getBytes("UTF-8"));
+            os.close();
+
+            // read the response
+            printRequestResponse(conn);
+
+            conn.disconnect();
+
+        } catch (IOException e) {
+
+            System.out.println(e);
+        }
     }
 
     // Leer usuario
@@ -236,5 +310,50 @@ public class ApiManager {
     // Eliminar usuario
     public void deleteUser(User user) {
 
+        //Inicia el proceso de eliminacion de cuenta
+        System.out.println("Eliminando User");
+
+        DeleteUserRequest userRequest = new DeleteUserRequest();
+        userRequest.setCondition(user);
+
+        // 1. Transformar User to JSON
+        Gson gson = new Gson();
+        String userRequestJSON = gson.toJson(userRequest);
+        System.out.println(userRequestJSON);
+
+        // 2. Enviar JSON to API
+        try {
+
+            // Crear el requests y ejecutarlo
+            URL url = new URL(apiURL + "users");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestMethod("DELETE");
+            conn.connect();
+
+            OutputStream os = conn.getOutputStream();
+            os.write(userRequestJSON.getBytes("UTF-8"));
+            os.close();
+
+            // read the response
+            printRequestResponse(conn);
+
+            conn.disconnect();
+
+        } catch (IOException e) {
+
+            System.out.println(e);
+        }
+    }
+
+    private void printRequestResponse(HttpURLConnection conn) throws IOException {
+
+        // read the response
+        InputStream in = new BufferedInputStream(conn.getInputStream());
+        String result = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+        System.out.println(result);
+
+        in.close();
     }
 }

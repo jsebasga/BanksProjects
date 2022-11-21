@@ -282,7 +282,7 @@ public class NewProfileView extends javax.swing.JFrame {
             newUser.setName(name.getText());
             newUser.setLastName(lastName.getText());
             newUser.setEmail(email.getText());
-            newUser.setId(Integer.parseInt(id.getText()));
+            newUser.setId(id.getText());
             newUser.setPassword(password.getText());
             newUser.setRol(rol.getSelectedItem().toString());
 

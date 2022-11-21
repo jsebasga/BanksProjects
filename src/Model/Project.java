@@ -1,4 +1,4 @@
-package banksprojects;
+package Model;
 
 /**
  *

@@ -1,6 +1,7 @@
 
-package banksprojects;
+package ViewController;
 
+import Model.User;
 import javax.swing.JOptionPane;
 import network.ApiManager;
 

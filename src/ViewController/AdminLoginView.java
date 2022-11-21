@@ -1,5 +1,7 @@
-package banksprojects;
 
+package ViewController;
+
+import Model.User;
 import javax.swing.JOptionPane;
 import network.ApiManager;
 
@@ -7,12 +9,12 @@ import network.ApiManager;
  *
  * @author Sebastian Güiza & Paola Montoya
  */
-public class StudentLoginView extends javax.swing.JFrame {
-        
-    public StudentLoginView() {
+public class AdminLoginView extends javax.swing.JFrame {
+
+    public AdminLoginView() {
         initComponents();
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -21,8 +23,8 @@ public class StudentLoginView extends javax.swing.JFrame {
         user = new javax.swing.JLabel();
         imageBanner = new javax.swing.JLabel();
         user1 = new javax.swing.JLabel();
-        email = new javax.swing.JTextField();
         back = new javax.swing.JButton();
+        email = new javax.swing.JTextField();
         login = new javax.swing.JButton();
         warningEmail = new javax.swing.JLabel();
         warningPassword = new javax.swing.JLabel();
@@ -53,16 +55,6 @@ public class StudentLoginView extends javax.swing.JFrame {
         adLogBackground.add(user1);
         user1.setBounds(200, 400, 240, 30);
 
-        email.setBackground(new java.awt.Color(204, 204, 204));
-        email.setText("merlin@merlin.com");
-        email.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                emailActionPerformed(evt);
-            }
-        });
-        adLogBackground.add(email);
-        email.setBounds(525, 400, 240, 30);
-
         back.setBackground(new java.awt.Color(204, 204, 204));
         back.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
         back.setForeground(new java.awt.Color(0, 0, 0));
@@ -74,6 +66,18 @@ public class StudentLoginView extends javax.swing.JFrame {
         });
         adLogBackground.add(back);
         back.setBounds(300, 600, 150, 50);
+
+        email.setBackground(new java.awt.Color(204, 204, 204));
+        email.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        email.setForeground(new java.awt.Color(0, 0, 0));
+        email.setText("venus@venus.com");
+        email.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailActionPerformed(evt);
+            }
+        });
+        adLogBackground.add(email);
+        email.setBounds(525, 400, 240, 30);
 
         login.setBackground(new java.awt.Color(204, 204, 204));
         login.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
@@ -97,17 +101,12 @@ public class StudentLoginView extends javax.swing.JFrame {
         warningPassword.setForeground(new java.awt.Color(255, 0, 0));
         warningPassword.setText(" ");
         adLogBackground.add(warningPassword);
-        warningPassword.setBounds(530, 510, 230, 16);
+        warningPassword.setBounds(530, 510, 240, 16);
 
         password.setBackground(new java.awt.Color(204, 204, 204));
         password.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        password.setText("Merlin2401");
-        password.setToolTipText("");
-        password.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passwordActionPerformed(evt);
-            }
-        });
+        password.setForeground(new java.awt.Color(0, 0, 0));
+        password.setText("Venus2710");
         adLogBackground.add(password);
         password.setBounds(525, 480, 240, 30);
 
@@ -122,20 +121,15 @@ public class StudentLoginView extends javax.swing.JFrame {
     }//GEN-LAST:event_emailActionPerformed
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-
+        
         RolView rolView = new RolView();
         rolView.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_backActionPerformed
 
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
-   
-        User studentUser = new User();
-        studentUser.setEmail(email.getText());
-        ApiManager apiManager = new ApiManager();
-        User userResponse = apiManager.readUser(studentUser); 
-
-        String rol = "Estudiante";
+        
+     String rol = "Docente";
         
         if (email.getText().length() == 0) {
             warningEmail.setText("Debe de llenar este espacio");
@@ -144,19 +138,24 @@ public class StudentLoginView extends javax.swing.JFrame {
         if (password.getText().length() == 0) {
             warningPassword.setText("Debe de llenar este espacio");
         }
+
+        User adminUser = new User();
+        adminUser.setEmail(email.getText());
+        ApiManager apiManager = new ApiManager();
+        User userResponse = apiManager.readUser(adminUser);
         
         if (email.getText().equals(userResponse.getEmail()) && password.getText().equals(userResponse.getPassword())) {
 
             if (rol.equals(userResponse.getRol())){
                
-                StudentView studentView = new StudentView();
-                studentView.setUser(userResponse);
-                studentView.setVisible(true);
+                AdminView adminView = new AdminView();
+                adminView.setUser(userResponse);
+                adminView.setVisible(true);
                 this.setVisible(false);
             }
             else {
 
-            JOptionPane.showMessageDialog(null, "Usted no es un estudiante");
+            JOptionPane.showMessageDialog(null, "Usted no es un docente");
 
         }
         } else {
@@ -166,15 +165,11 @@ public class StudentLoginView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_loginActionPerformed
 
-    private void passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_passwordActionPerformed
-
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-              
+        /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -187,23 +182,21 @@ public class StudentLoginView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(StudentLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AdminLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(StudentLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AdminLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(StudentLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AdminLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(StudentLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AdminLoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new StudentLoginView().setVisible(true);
+                new AdminLoginView().setVisible(true);
             }
         });
     }

@@ -1,4 +1,6 @@
-package banksprojects;
+package Model;
+
+import Model.User;
 
 /**
  *

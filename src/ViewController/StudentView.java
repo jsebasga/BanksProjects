@@ -1,6 +1,8 @@
 
-package banksprojects;
+package ViewController;
 
+import Model.User;
+import Model.Project;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;

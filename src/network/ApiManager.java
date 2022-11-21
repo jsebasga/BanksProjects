@@ -1,10 +1,10 @@
 package network;
 
-import banksprojects.DeleteProjectRequest;
-import banksprojects.DeleteUserRequest;
-import banksprojects.Project;
-import banksprojects.UpdateUserRequest;
-import banksprojects.User;
+import Model.DeleteProjectRequest;
+import Model.DeleteUserRequest;
+import Model.Project;
+import Model.UpdateUserRequest;
+import Model.User;
 import com.google.gson.Gson;
 import java.io.BufferedInputStream;
 import java.io.IOException;
